@@ -1,0 +1,33 @@
+package org.coastal.util;
+
+/**
+ * <p>Title: TamosAbacus</p>
+ * <p>Description: TAMOS Algorithms</p>
+ * <p>Copyright: Copyright (c) 2005</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+import java.util.ArrayList;
+
+public class StringArrayList extends ArrayList {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  public String toString() {
+    String sList = "";
+
+    for(int i = 0; i < size(); i++) {
+      sList += ((sList.length() > 0 ? " " : "") + (String) get(i));
+    }  // End of for loop.
+
+    return sList;
+  }  // End of method toString
+
+  public String [] toStringArray() {
+    return (String []) toArray();
+  }  // End of method toArray
+}  // End of class StringArrayList

@@ -1,0 +1,133 @@
+/*
+ * Created on Aug 12, 2005
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package org.coastal.util;
+
+/**
+ * @author jbrothers
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+public class SSEMPassthrough {
+
+    /**
+     * 
+     */
+    public SSEMPassthrough() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+    public static void main(String[] args) {
+    }
+
+// See the source for the SSEM sender at
+//    http://subversion/svn/ssem/src/procs/ssem/src/text.cc
+// Here's a java version of the C++ sender-encoder Text::printable(const char*, int) {}
+//  Returns a printable version of the given buffer's data, using \xNN codes.
+    // char* Text::printable (const char* rgb, int cb)
+    public static String encode(String Srgb)
+    {   int cb = Srgb.length();
+        StringBuffer buffer = new StringBuffer();
+        
+        // Compose output string
+        for (int rgb = 0; cb-- > 0; Srgb.charAt(rgb++)) {
+            // test like an isprint();
+            if ( 32 <= Srgb.charAt(rgb) && Srgb.charAt(rgb) <= 126) 
+            { 
+                switch (Srgb.charAt(rgb)) {
+                case 0x08: buffer.append("\\b"); break;
+                case 0x20: buffer.append("\\s"); break;
+                case 0x5c: buffer.append("\\\\"); break;
+                default :
+                    buffer.append (Srgb.charAt(rgb));
+                }
+              } else {
+                switch (Srgb.charAt(rgb)) {
+                case 0x00: buffer.append("\\0"); break;
+                case 0x08: buffer.append("\\b"); break;
+                case 0x09: buffer.append("\\t"); break;
+                case 0x0a: buffer.append("\\n"); break;
+                case 0x0c: buffer.append("\\f"); break;
+                case 0x0d: buffer.append("\\r"); break;
+                default :
+                    String escCode = "\\x"+ Integer.toHexString( 0x100 | Srgb.charAt(rgb)).substring(1);                buffer.append (escCode);
+                }
+            }
+        }
+        
+        return new String(buffer);
+    }
+    
+    /** Interprets escapes and returns a buffer with the denoted binary data.
+        * The caller must delete returned memory pointer.
+        * \par
+        */
+        public static String decode(String Srgb)
+        {
+        	return decode(Srgb, false);
+        }
+
+        /** Interprets escapes and returns a buffer with the denoted binary data.
+         * The caller must delete returned memory pointer.
+         * \par
+         **/
+         public static synchronized String decode(String Srgb, boolean bWhiteSpacesOnly)
+         {
+             StringBuffer Brgb = new StringBuffer();
+             int _cb = Srgb.length();
+             
+             for (int rgb = 0; _cb > 0; ++rgb, --_cb) {
+                 if (Srgb.charAt(rgb) == '\\') {
+                     if (_cb > 1 )
+                     switch (Srgb.charAt(rgb+1)) {
+                     case 'b': Brgb.append('\b'); break;
+                     case 's': Brgb.append(' '); break;
+                     case 'n': Brgb.append('\n'); break;
+                     case 't': Brgb.append('\t'); break;
+                     case 'f': Brgb.append('\f'); break;
+                     case 'r': Brgb.append('\r'); break;
+                     case '0': Brgb.append('\0'); break;
+                     case 'x':
+                    	 if(_cb >= 4) {
+                    		 if(bWhiteSpacesOnly) {
+                    			 Brgb.append(Srgb.substring(rgb, rgb+4));
+                    			 rgb += 2;
+                    			 _cb -= 2;
+                    		 }  // End of if statement.
+                    		 else if (isXdigit (Srgb.charAt(rgb+2)) && isXdigit (Srgb.charAt(rgb+3))) {
+                    			 Brgb.append((char)(Integer.parseInt(Srgb.substring(rgb+2,rgb+4), 16)));
+                    			 rgb += 2;
+                    			 _cb -= 2;
+                    		 }  // End of else-if statement.
+                    	 }  // End of if statement.
+                         break;
+                     }
+                     ++rgb;
+                     --_cb;
+                 }
+                 else
+                     Brgb.append(Srgb.charAt(rgb));
+             }
+             
+             return new String(Brgb);
+        }
+
+        static boolean isXdigit(char c){
+            boolean rslt = false;
+            if (Character.isDigit(c))
+                rslt = true;
+            else {
+                if ((c >= 'A') && (c <= 'F')
+                || (c >= 'a') && (c <= 'f'))
+                 rslt = true;
+                }
+                
+            return rslt;
+        }
+
+}

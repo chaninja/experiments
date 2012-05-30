@@ -1,0 +1,16 @@
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+            xmlns:e="http://ant.apache.org/ivy/extra">
+    <info organisation="org.mycompany" module="Utility" status="integration" revision="2.0">
+    </info>
+    <configurations>
+    	<conf name="default" description="binary" />
+    	<conf name="sources" description="source codes" />
+    </configurations>
+    <publications defaultconf="default">
+    	<artifact name="Utility" type="jar" conf="default" ext="jar" />
+    	<artifact name="Utility-sources" type="source" conf="sources" ext="zip" />
+    </publications>
+    <dependencies/>
+</ivy-module>

@@ -1,0 +1,75 @@
+package org.coastal.util;
+
+/**
+ * This class emulates the 'ping' utility by briefly attempting to open a 
+ * socket to a remote system's 'echo port', which is always port 7.  To
+ * 'ping' the remote system, a string is sent to its 'echo port'.  If the 
+ * remote system respondes, the ping is regarded as being successful.
+ * 
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003 - 2004</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+
+public class PingRemote {
+	private static Logger log = Logger.getLogger(PingRemote.class);
+	public boolean ping(String sRemoteName) {
+    boolean bPinged = false;
+    if (sRemoteName == null ? false : sRemoteName.length() > 0) {
+      try {
+        int nIndex = sRemoteName.indexOf("://");
+        if(nIndex >= 0) {
+          sRemoteName = sRemoteName.substring(nIndex + 3, 
+             sRemoteName.length());
+        }  // End of if statement.
+        nIndex     = sRemoteName.indexOf("/");
+        if(nIndex >= 0) {
+          sRemoteName = sRemoteName.substring(0, nIndex);
+        }  // End of if statement.
+        // sRemoteName += ".coastalenvironmental.com";
+      } catch(Exception e) {
+        e.printStackTrace();
+      }  // End of catch statement.
+
+      log.info("PingRemote : ping : testing remote named = " + 
+        sRemoteName);
+
+      Runtime r = Runtime.getRuntime();
+      try {
+        Process p = r.exec("ping " + sRemoteName);
+        if(p == null) {
+          log.info("PingRemote : ping : system could not connect");
+        }  // End of if statement.
+        else {
+          BufferedReader br =
+              new BufferedReader(new InputStreamReader(p.getInputStream()));
+          String sLine;
+          while((sLine = br.readLine()) != null) {
+            log.info(sLine);
+            try {
+              if(!bPinged) {
+                bPinged = sLine.indexOf("Reply from") >= 0;
+              }  // End of if statement.
+            } catch(Exception e) {
+              e.printStackTrace();
+            }  // End of catch statement.
+          } // End of while loop
+          br.close();
+        }  // End of else statement.
+      } catch (IOException ioe) {
+        ioe.printStackTrace();
+      }  // End of catch statement.
+    } // End of if statement.
+
+    return bPinged;
+  }  // End of method ping
+}  // End of class PingRemote

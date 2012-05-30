@@ -1,0 +1,181 @@
+// $Id: Interval.java 2373 2006-01-19 16:54:14Z mhart $
+package org.coastal.util;
+
+/* Interval.java
+   written by Marc Singer
+   19 Sep 2003
+
+   Copyright (C) 2003 The Buici Company
+
+   -----------
+   DESCRIPTION
+   -----------
+
+   Interval object.  Used by Scheduler.
+
+
+*/
+
+
+/** The <tt>Interval</tt> object describes the timing of cyclical or
+ * recurring events.  The most declarations use the string interface.
+ * For example, the interval "15+1" describes an event that occurs
+ * every 15 seconds starting one second after the minute.  The implied
+ * units are seconds, but other suffixes may be used.  "1d+3h" is a
+ * daily interval that occurs three hours from the start of the day.
+ * The valid suffixes are "s" for seconds, "m" for minute, "h" for
+ * hour, and "d" for day.  <p> <tt>Interval</tt>s are used when
+ * creating <tt>ScheduledEvent</tt> objects.
+*/
+
+public class Interval {
+
+    /** Thrown when an invalid interval string used to create an
+     * <tt>Interval</tt>. */
+
+    class InvalidIntervalException extends Exception {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+	}
+
+    protected long m_secFrequency; // Frequency for repetition
+    protected long m_secOffset;    // Start of day offset for invocation
+//    protected String m_sDescription;
+
+    void init (int sec) {
+	m_secFrequency = sec;
+	m_secOffset = 0; }
+
+    void init (int secFrequency, int secOffset) {
+	m_secFrequency = secFrequency;
+	m_secOffset = secOffset; }
+
+    int multiplier (char ch) throws InvalidIntervalException {
+	switch (ch) {
+	default:
+	    throw new InvalidIntervalException ();
+	case 's':
+	case 'S':
+	    return 1;
+	case 'm':
+	case 'M':
+	    return 60;
+	case 'h':
+	case 'H':
+	    return 60*60;
+	case 'd':
+	case 'D':
+	    return 60*60*24;
+	}
+    }
+
+    void init (String s) throws InvalidIntervalException {
+	char[] rgch = s.toCharArray ();
+	int state = 0;
+	m_secOffset = 0;
+	m_secFrequency = 0;
+	for (int i = 0; i < rgch.length; ) {
+	    int ctype = Character.getType (rgch[i]);
+	    switch (state) {
+	    case 0:
+		if (ctype == Character.DECIMAL_DIGIT_NUMBER) {
+		    m_secFrequency = m_secFrequency*10 + (rgch[i] - '0');
+		    ++i;
+		    continue;
+		}
+		++state;
+		break;
+
+	    case 1:
+		if (   ctype == Character.UPPERCASE_LETTER
+		       || ctype == Character.LOWERCASE_LETTER
+		       || ctype == Character.TITLECASE_LETTER) {
+		    m_secFrequency = m_secFrequency*multiplier (rgch[i]);
+		    ++i;
+		}		    
+		++state;
+		break;
+
+	    case 2:
+		if (rgch[i] == '-')
+		    state += 10;
+		else if (rgch[i] != '+')
+		    throw new InvalidIntervalException ();
+		++i;
+		++state;
+		break;
+
+	    case 3:
+		if (ctype == Character.DECIMAL_DIGIT_NUMBER) {
+		    m_secOffset = m_secOffset*10 + (rgch[i] - '0');
+		    ++i;
+		    continue;
+		}
+		++state;
+		break;
+
+	    case 13:
+		if (ctype == Character.DECIMAL_DIGIT_NUMBER) {
+		    m_secOffset = m_secOffset*10 + (rgch[i] - '0');
+		    ++i;
+		    continue;
+		}
+		m_secOffset = -m_secOffset;
+		state -= 9;
+		break;
+
+	    case 4:
+		if (   ctype == Character.UPPERCASE_LETTER
+		       || ctype == Character.LOWERCASE_LETTER
+		       || ctype == Character.TITLECASE_LETTER) {
+		    m_secOffset = m_secOffset*multiplier (rgch[i]);
+		    ++i;
+		}		    
+		++state;
+		break;
+
+	    case 5:
+		throw new InvalidIntervalException ();
+	    }
+	}
+    }
+
+    /** Create an interval with a period of <tt>seconds</tt>.*/
+
+    public Interval (int seconds) {
+	init (seconds); }
+
+    /** Create an interval with a period described by <tt>s</tt>.  The
+    * format of <tt>s</tt> is "<em>frequency</em>" or
+    "<em>frequency</em>+<em>offset</em>" or
+    "<em>frequency</em>-<em>offset</em>".  Each of <em>frequency</em>
+    and <em>offset</em> is an integer with an optional suffix.
+    Without a suffix, the value is interpreted as a count of seconds.
+    Suffixes may be "s" for seconds, "m" for minutes, "h" for hours,
+    or "d" for days.  For example, an interval of "10m+12s" describes
+    an event that occurs every ten minutes at 12 seconds after the
+    minute.*/
+
+    public Interval (String s) throws InvalidIntervalException {
+	init (s); }
+
+    /** Return a string describing the interval. */
+
+    public String toString () {
+	String s = m_secFrequency + "s";
+	if (m_secOffset != 0)
+	    s += m_secOffset + "s";
+	return s; 
+    }
+
+    /** Return the interval's frequency in seconds. */
+
+    public long frequency () {
+	return m_secFrequency; }
+    /** Return the interval's offset in seconds. */
+
+    public long offset () {
+	return m_secOffset; }
+}

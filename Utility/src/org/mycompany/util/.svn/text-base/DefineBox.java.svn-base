@@ -1,0 +1,43 @@
+package org.coastal.util;
+
+/**
+ * Class DefineBox is a simple class intended to store dimensions necessary for
+ * graphing a box shape.
+ * 
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003 - 2004</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+public class DefineBox {
+  int m_nXTopLeft;
+  int m_nYTopLeft;
+  int m_nWidth;
+  int m_nHeight;
+
+  public DefineBox(int nXTopLeft, int nYTopLeft, int nWidth, int nHeight) {
+    m_nXTopLeft = nXTopLeft;
+    m_nYTopLeft = nYTopLeft;
+    m_nWidth    = nWidth;
+    m_nHeight   = nHeight;
+  }  // End of constructor
+
+  public int getXTopLeft() {
+    return m_nXTopLeft;
+  }  // End of method getXTopLeft
+
+  public int getYTopLeft() {
+    return m_nYTopLeft;
+  }  // End of method getYTopLeft
+
+  public int getWidth() {
+    return m_nWidth;
+  }  // End of method getWidth
+
+  public int getHeight() {
+    return m_nHeight;
+  }  // End of method getHeight
+}  // End of class DefineBox
