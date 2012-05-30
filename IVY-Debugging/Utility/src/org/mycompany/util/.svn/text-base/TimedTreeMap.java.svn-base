@@ -1,0 +1,97 @@
+package org.coastal.util;
+
+/**
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003 - 2004</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class TimedTreeMap {
+  private TreeMap m_tm         = new TreeMap();
+  private int     m_nTimeLimit = Integer.MAX_VALUE;
+
+  public TimedTreeMap(int nTimeLimit) {
+    setTimeLimit(nTimeLimit);
+  }  // End of constructor method.
+
+  public void clear() {
+    m_tm.clear();
+  }  // End of method clear
+
+  public void put(Object oKey, Object oValue) {
+    TimedObject to = new TimedObject(oValue, timeLimit());
+    // log.info("TimedTreeMap : put : to.get() = " + 
+    //   (String) to.get(0));    
+    m_tm.put(oKey, to);
+    // log.info("TimedTreeMap : put : size = " + m_tm.size());
+  }  // End of method put
+
+  public Object get(Object oKey, int nCurrentTime) {
+    Object o = null;
+    if(containsKey(oKey)) {
+      TimedObject to = (TimedObject) m_tm.get(oKey);
+      if(to.expirationTime() < timeLimit()) {
+        remove(oKey);
+      }  // End of if statement.
+      else {
+        o = to.get(nCurrentTime);
+      }  // End of else statement.
+    }  // End of if statement.
+    return o;
+  }  // End of method get
+
+  public int size() {
+    return m_tm.size();
+  }  // End of method size
+
+  public void remove(Object oKey) {
+    m_tm.remove(oKey);
+  }  // End of method remove
+
+  public void removeExpiredObjects() {
+    if(size() > 0) {
+      ArrayList al = new ArrayList();
+      Iterator it  = iterator();
+
+      // Identify all of the expired objects.
+      while(it.hasNext()) {
+        Map.Entry   e  = (Map.Entry) it.next();
+        TimedObject to = (TimedObject) e.getValue();
+        if(to.expirationTime() < timeLimit()) {
+          al.add(e.getKey());
+        }  // End of if statement.
+      }  // End of while loop
+
+      // Remove the found expired objects.
+      if(al.size() > 0) {
+        for(int i = 0; i < al.size(); i++) {
+          remove(al.get(i));
+        }  // End of for loop
+      }  // End of if statement.
+    }  // End of if statement.
+  }  // End of method removeExpiredObjects
+
+  public boolean containsKey(Object oKey) {
+    return m_tm.containsKey(oKey);
+  }  // End of method containsKey
+
+  public void setTimeLimit(int nTimeLimit) {
+    m_nTimeLimit = nTimeLimit;
+  }  // End of method setTimeLimit
+
+  public int timeLimit() {
+    return m_nTimeLimit;
+  }  // End of method timeLimit
+
+  public Iterator iterator() {
+    return m_tm.entrySet().iterator();
+  }  // End of method iterator
+}  // End of method TimedTreeMap

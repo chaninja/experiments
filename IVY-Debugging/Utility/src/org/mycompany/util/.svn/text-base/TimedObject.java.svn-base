@@ -1,0 +1,54 @@
+package org.coastal.util;
+
+/**
+ * This class stores any Object class and allows retrieval of the Object 
+ * as long as the time provided is before the expiration time stored when the
+ * Object is stored.  In this way, the Object.
+ * 
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003 - 2004</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+public class TimedObject {
+  private Object m_o               = null;
+  private int    m_nExpirationTime = 0;
+
+  /**
+   * The constructor stores the desired Object and its expiration time as the 
+   * seconds after epoch.
+   * @param o Object to store.
+   * @param nExpirationTime Object's expiration time.
+   */
+  public TimedObject(Object o, int nExpirationTime) throws 
+      IllegalArgumentException {
+    if(nExpirationTime < 0) {
+      throw new IllegalArgumentException("param nExpirationTime cannot be " +
+        "less than zero");
+    }  // End of if statement.
+    m_o               = o;
+    m_nExpirationTime = nExpirationTime;
+  }  // End of constructor method
+
+  /**
+   * This method retrieves the stored Object as long as the current time is
+   * before the Object's expiration time.
+   * @param nCurrentTime current time in seconds after epoch.
+   * @return Object if current time is before the expiration time; otherwise,
+   * the method returns null.
+   */
+  public Object get(int nCurrentTime) {
+    return nCurrentTime > m_nExpirationTime ? null : m_o;
+  }  // End of method get
+
+  /**
+   * 
+   * @return Method returns the stored expiration time for the stored Object.
+   */
+  public int expirationTime() {
+    return m_nExpirationTime;
+  }  // End of method timeLimit
+}  // End of class TimedObject

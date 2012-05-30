@@ -1,0 +1,34 @@
+package org.coastal.util;
+
+/**
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ * 
+ * The ReverseComparator class is used when creating a TreeMap or similar 
+ * hashtable class to replace its original ascending order key sorter with
+ * a descending order key sorter.
+ * 
+ * NOTE:  The keys used are of class Integer.  ReverseComparator implements
+ * the interface Comparator.
+ */
+
+import java.util.*;
+
+public class ReverseComparator implements Comparator {
+  /**
+   * Implementation of method compare.
+   * @param a first value to compare (Integer class expected).
+   * @param b second value to compare (Integer class expected).
+   * @return comparison of second value to first for a reverse comparison.
+   */
+  public int compare(Object a, Object b) {
+    Integer na = (Integer) a;
+    Integer nb = (Integer) b;
+
+    return nb.compareTo(na);
+  }  // End of method compare
+}  // End of class ReverseCompare

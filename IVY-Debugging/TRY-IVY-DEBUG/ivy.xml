@@ -1,0 +1,14 @@
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+            xmlns:e="http://ant.apache.org/ivy/extra"
+            xmlns:ivyde="http://ant.apache.org/ivy/ivyde/ns/">
+    <info organisation="org.mycompany" module="TRY-IVY-DEBUG" status="integration" revision="2.0">
+    </info>
+    
+    <publications/>
+	
+    <dependencies >
+    	<dependency name="Utility" branch="trunk" rev="latest.integration" conf="*->default,sources" />
+    </dependencies>
+</ivy-module>

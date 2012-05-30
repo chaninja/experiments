@@ -1,0 +1,96 @@
+package org.coastal.util;
+
+/**
+ * Class SortedLinkedList is an extension of Java class LinkedList that expands
+ * its functionality by providing methods that permit the insertion of members
+ * in a sorted order.
+ * 
+ * NOTE: All methods in SortedLinkedList are synchronized, which is not a 
+ * characteristic of LinkedList.  Only those synchronized methods available in 
+ * this class should be used with threads.
+ * 
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003 - 2004</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+
+import org.apache.log4j.Logger;
+
+public class SortedLinkedList extends LinkedList {
+  private static Logger log = Logger.getLogger(SortedLinkedList.class); 
+  private static final long serialVersionUID = 1L;
+  private int m_nLastInsertionIndex = -1;
+
+  public SortedLinkedList() {
+    super();  // Create an empty LinkedList to expand upon.
+  }  // End of constructor
+
+  /**
+   * This method inserts the specified object into the list in a sorted manner,
+   * providing that all other objects in the list are of the same type and are
+   * extensions of Java class Comparable.
+   * @param o object to insert.
+   */
+  public synchronized void insert(Object o) {
+    // ScheduledEvent ev = (ScheduledEvent) o;
+    if(size() == 0) {
+      add(o);
+      m_nLastInsertionIndex = 0;
+      // log.info("SortedLinkedList : insert : adding at 0, " +
+      //   ev.event_time()/1000);
+    }  // End of if statement.
+    else {
+      Comparable c = (Comparable) o;
+      try {
+        int     nIndex    = 0;
+        boolean bContinue = true;
+        while(nIndex < size() && bContinue) {
+          if(((Comparable) get(nIndex)).compareTo(c) >= 0) {
+            bContinue = false;
+          }  // End of if statement.
+          else {
+            nIndex++;
+          }  // End of else statement.
+        }  // End of while loop.
+        add(nIndex, o);
+        m_nLastInsertionIndex = nIndex;
+        // log.info("SortedLinkedList : insert : adding at " + 
+        //   nIndex + ", "  + ev.event_time()/1000);
+      }  // End of try statement.
+      catch (Exception e) {
+        log.error("Error inserting event in queue: ", e);
+    	add(o);
+        m_nLastInsertionIndex = 0;
+        // log.info("SortedLinkedList : insert : CATCH adding at 0," +
+        //   ev.event_time()/1000);
+      }  // End of catch statement.
+    }  // End of else statement.
+  }  // End of method insert
+
+  public synchronized Object popTop() throws NoSuchElementException {
+    Object o = getFirst();
+    // ScheduledEvent ev = (ScheduledEvent) o;
+    removeFirst();
+    // log.info("SortedLinkedList : popTop : size = " + size() + 
+    //  ", time = " + ev.event_time()/1000);
+    return o;
+  }  // End of method popTop
+
+  public synchronized Object top() throws NoSuchElementException {
+    Object o = getFirst();
+    // ScheduledEvent ev = (ScheduledEvent) o;
+    // log.info("SortedLinkedList : top : size = " + size() +
+    //   ", time = " + ev.event_time()/1000);
+    return o;
+  }  // End of method top
+
+  public int lastInsertionIndex() {
+    return m_nLastInsertionIndex;
+  }  // End of method lastInsertionIndex
+}  // End of class SortedLinkedList

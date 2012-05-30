@@ -1,0 +1,73 @@
+package org.coastal.util;
+
+/**
+ * This class stores two values: time since epoch in milliseconds and a 
+ * priority code. The lower the priority value, the greater the priority.
+ * 
+ * <p>Title: LinkedAbacus</p>
+ * <p>Description: Test for running Aviation Intercept Algorithms</p>
+ * <p>Copyright: Copyright (c) 2003 - 2004</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+public class PrioritizedTime implements Comparable {
+  protected long m_lTime     = 0;
+  protected int  m_nPriority = 0;
+  
+  public PrioritizedTime() {
+  }  // End of constructor.
+
+  public PrioritizedTime(long lTime) {
+    setTime(lTime);
+  }  // End of constructor.
+
+  public PrioritizedTime(int nPriority) {
+    setPriority(nPriority);
+  }  // End of constructor
+
+  public PrioritizedTime(long lTime, int nPriority) {
+    setTime(lTime);
+    setPriority(nPriority);
+  }  // End of constructor
+
+  public void setTime(long lTime) {
+    if(lTime >= 0) {
+      m_lTime = lTime;
+    }  // End of if statement.
+  }  // End of method setTime
+
+  public void setPriority(int nPriority) {
+    if(nPriority >= 0) {
+      m_nPriority = nPriority;
+    }  // End of if statement.
+  }  // End of method setPriority
+
+  public long time() {
+    return m_lTime;
+  }  // End method time
+
+  public int priority() {
+    return m_nPriority;
+  }  // End of method priority
+
+  public boolean equals(Object o) {
+    PrioritizedTime pt = (PrioritizedTime) o;
+    return time() == pt.time() && priority() == pt.priority();
+  }  // End of method equals
+
+  public int compareTo(Object o) {
+    PrioritizedTime pt    = (PrioritizedTime) o;
+    long            lDiff = time() - pt.time();
+    return lDiff == 0 ? sign(priority() - pt.priority()) : sign(lDiff);
+  }  // End of method compareTo
+
+  protected int sign(long l) {
+    return l == 0 ? 0 : (l < 0 ? -1 : 1);
+  }  // End of sign
+
+  protected int sign(int n) {
+    return sign((long) n);
+  }  // End of sign
+}  // End of PrioritizedTime

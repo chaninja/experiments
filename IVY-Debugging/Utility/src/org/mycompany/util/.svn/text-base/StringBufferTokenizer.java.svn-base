@@ -1,0 +1,296 @@
+/*
+ * Created on Dec 6, 2004
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package org.coastal.util;
+
+import org.apache.log4j.Logger;
+
+/**
+ * PURPOSE: Wrap StringBuffer (which is final) in order to pop nextToken based on delimiter.
+ * Also be able to return tail.
+ * Keeps pointer to current index within StringBuffer.
+ * Allow append as per StringBuffer.
+ * 
+ * @author Richard
+ */
+public class StringBufferTokenizer {
+    // --------------------------------- DECLARATIONS ---------------------------------
+	private static Logger log = Logger.getLogger(StringBufferTokenizer.class);
+	protected StringBuffer sb = null;
+    protected int currentIndex = 0;
+
+    // --------------------------------- CONSTRUCTORS ---------------------------------
+    /**
+     * 
+     */
+    public StringBufferTokenizer() {
+        super();
+    }
+
+    public StringBufferTokenizer(String s) {
+        setSb(new StringBuffer(s));
+        setCurrentIndex(0);
+    }
+
+    // --------------------------------- ACTIONS ---------------------------------
+
+    /**
+     * PURPOSE: Extract next token based on current index point and user supplied delimiter.
+     * If called and no delimiter exists, then return empty string.
+     * 
+     * @param delimit
+     * @return
+     */
+    public String nextToken(String delimit) {
+        String head = null;
+        try {
+            int ndx = getSb().indexOf(delimit, getCurrentIndex());
+            if (ndx != -1) {
+                head = getSb().substring(getCurrentIndex(), ndx);
+                setCurrentIndex(ndx + delimit.length());
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        if (head == null) {
+            return "";
+        } else {
+            return head;
+        }
+    }
+
+    /**
+     * PURPOSE: Return string between current index pointer and end of string buffer.
+     * Move pointer to end of string buffer.
+     * 
+     * @return
+     */
+    public String tail() {
+        String tail = null;
+        tail = getSb().substring(getCurrentIndex());
+        setCurrentIndex(length());
+        if (tail == null) {
+            return "";
+        } else {
+            return tail;
+        }
+    }
+
+    /**
+     * PURPOSE: Concatenate string to end of string buffer ... simply call StringBuffer::append().
+     * 
+     * @param s
+     */
+    public void append(String s) {
+        getSb().append(s);
+    }
+
+    /**
+     * @param s
+     */
+    public void append(char s) {
+        getSb().append(s);
+    }
+
+    /**
+     * PURPOSE: Determine if current index pointer is pointing to last element in string buffer.
+     * 
+     * @return
+     */
+    protected boolean endOfBuffer() {
+        if (getCurrentIndex() < getSb().length()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * PURPOSE: Reset current index point back to beginning of string buffer ... but keep contents same.
+     */
+    public void reset() {
+        setCurrentIndex(0);
+    }
+
+    /**
+     * PURPOSE: Return total length of string buffer.
+     * 
+     * @return
+     */
+    public int length() {
+        return getSb().length();
+    }
+
+    /**
+     * PURPOSE: Return length between current index and end of string buffer.
+     * That is, what is the length of the tail?
+     * 
+     * @return
+     */
+    public int tailLength() {
+        return (length() - getCurrentIndex() - 1);
+    }
+
+    /** 
+     * PURPOSE: Return string contained within StringBuffer.
+     * 
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return getSb().toString();
+    }
+    
+
+    /**
+     * PURPOSE: Trim/delete leading and trailing zeroes.
+     */
+    public void trim() {
+        int headNdx = 0;
+        int tailNdx = 0;
+        if (length() != 0) {
+            tailNdx = length() - 1;
+        } else {
+            tailNdx = 0;
+        }
+
+        headNdx = trimHeaderIndex();
+        if (getCurrentIndex() <= headNdx) {
+            setCurrentIndex(0);
+        } else {
+            setCurrentIndex(getCurrentIndex() - headNdx);
+        }
+        getSb().delete(0, headNdx);
+
+        tailNdx = trimTailIndex();
+        if ((tailNdx != 0) || (length() > 0)) {
+            if (getCurrentIndex() >= tailNdx) {
+                setCurrentIndex(tailNdx);
+            }
+            getSb().delete(tailNdx + 1, length());
+        }
+    }
+
+    /**
+     * PURPOSE: Return index of first non-space char at head of string buffer.
+     * Need this index in order to delete spaces from start of string buffer up to and including this index.
+     * 
+     * @return
+     */
+    protected int trimHeaderIndex() {
+        int headIndex = 0;
+        if (length() != 0) {
+            while ((headIndex < length()) && (getSb().charAt(headIndex) == ' ')) {
+                ++headIndex;
+            }
+        }
+        return headIndex;
+    }
+
+    /**
+     * PURPOSE: Return index of last non-space char at tail of string buffer.
+     * Need this index in order to delete all trailing spaces from this index to end of string buffer.
+     * 
+     * @return
+     */
+    protected int trimTailIndex() {
+        int tailIndex = 0;
+        if (length() != 0) {
+            tailIndex = length() - 1;
+        } else {
+            tailIndex = 0;
+        }
+
+        if (length() != 0) {
+            while ((tailIndex > -1) && (getSb().charAt(tailIndex) == ' ')) {
+                --tailIndex;
+            }
+        }
+        return tailIndex;
+    }
+
+    // --------------------------------- MAIN ---------------------------------
+
+    public static void main(String[] args) {
+        //        String s = "now is, the / time, for all, good men";
+        //        String s = "  coastal   ";
+        //        String s = "xxcoastalxx";
+        //        String s = "comma,18,0,-1";
+        //        String s = "               how,are,you     ";
+        //        String s = "coastal";
+//        String s = "";
+//        String s = ",now,is,the";
+        String s = "now,,";
+        //        StringBuffer sb = new StringBuffer(s);
+        String delimit = ",";
+        StringBufferTokenizer avsb = new StringBufferTokenizer(s);
+        //        log.info(avsb.toString());
+        //        log.info(avsb.length());
+        //        log.info(avsb.trimHeaderIndex());
+        //        log.info(avsb.trimTailIndex());
+        //        avsb.trim();
+        //        log.info(avsb.toString());
+        //        log.info(avsb.length());
+        String tok = avsb.nextToken(delimit);
+        //        String tail = null;
+        log.info("tok = " + tok);
+//        log.info("length " + avsb.length());
+//        log.info("index " + avsb.getCurrentIndex());
+//        avsb.trim();
+        tok = avsb.nextToken(delimit);
+        log.info("tok = " + tok);
+//        log.info("length " + avsb.length());
+//        log.info("index " + avsb.getCurrentIndex());
+        //        tok = avsb.nextToken(delimit);
+        //        log.info(tok);
+        //        tok = avsb.nextToken(delimit);
+        //        log.info(tok);
+        log.info("tail = " + avsb.tail());
+//        log.info("index " + avsb.getCurrentIndex());
+//        log.info("tail " + avsb.tail());
+//        log.info("index " + avsb.getCurrentIndex());
+        //        log.info(avsb.tail());
+        //        log.info(avsb.tail());
+        //        avsb.append("little, brown, fox");
+        //        tok = avsb.nextToken(delimit);
+        //        log.info(tok);
+        //        log.info(avsb.tail());
+    }
+
+    // --------------------------------- ACCESSORS ---------------------------------
+
+    /**
+     * @return Returns the sb.
+     */
+    public StringBuffer getSb() {
+        if (sb == null) {
+            sb = new StringBuffer();
+        }
+        return sb;
+    }
+
+    /**
+     * @param sb The sb to set.
+     */
+    public void setSb(StringBuffer sb) {
+        this.sb = sb;
+        reset();
+    }
+
+    /**
+     * @return Returns the currentIndex.
+     */
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    /**
+     * @param currentIndex The currentIndex to set.
+     */
+    public void setCurrentIndex(int currentIndex) {
+        this.currentIndex = currentIndex;
+    }
+}

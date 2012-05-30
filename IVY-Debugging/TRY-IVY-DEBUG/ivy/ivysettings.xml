@@ -1,0 +1,14 @@
+<ivysettings>
+  <properties file="ivysettings.properties"/>
+  <settings defaultCacheDir="${ivy.settings.dir}/ivy-cache" defaultResolver="chain" />  
+  <resolvers>
+  	<chain name="chain">
+		<filesystem name="projects">
+  			<artifact pattern="${repository.dir}/${ivy.artifact.pattern}" />
+			<ivy pattern="${repository.dir}/${ivy.pattern}" />
+		</filesystem>
+		<ibiblio name="libraries" m2compatible="true" usepoms="false" /> 
+  	</chain>
+  </resolvers>
+</ivysettings>
+

@@ -1,0 +1,30 @@
+package org.coastal.util;
+
+import org.apache.log4j.Logger;
+
+/**
+ * <p>Title: TamosAbacus</p>
+ * <p>Description: TAMOS Algorithms</p>
+ * <p>Copyright: Copyright (c) 2005</p>
+ * <p>Company: Coastal Environmental Systems</p>
+ * @author Michael Hart
+ * @version 1.0
+ */
+
+public class ControlledSystemOut {
+	private static Logger log = Logger.getLogger(ControlledSystemOut.class);
+	boolean m_bEnableSystemOut = true;
+
+  public ControlledSystemOut() {
+  }  // End of constructor method.
+
+  public void enableSystemOut(boolean bEnableSystemOut) {
+    m_bEnableSystemOut = bEnableSystemOut;
+  }  // End of mehod enableSystemOut
+
+  public void println(String sMessage) {
+    if(sMessage != null && m_bEnableSystemOut) {
+      log.info(sMessage);
+    }  // End of if statement.
+  }  // End of method println
+}  // End of class ControlledSystemOut
