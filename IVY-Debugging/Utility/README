@@ -1,0 +1,1 @@
+This project publishes a binary Utility.jar and Utility-source.zip artifacts. use publish-remote ant target to publish the artifacts.
